@@ -5,5 +5,5 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
-  base: "/christian-ministry/", // <-- your repo name with slashes
+  base: "/christian-ministry/", // trailing slash matters
 });
