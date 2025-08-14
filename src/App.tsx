@@ -20,7 +20,8 @@ const YOUTUBE_VIDEO_IDS = [
   "LdsZUj3bGvw",
 ];
 
-const PLAYLIST_ID = "YOUR_PLAYLIST_ID"; // optional: will show a big playlist embed on the Gallery page
+// Leave empty by default so the video gallery doesn't render a broken playlist embed.
+const PLAYLIST_ID = ""; // optional: set to a YouTube playlist ID to show a large embed on the Gallery page
 
 const BRAND = {
   name: "Walking in Faith",
@@ -96,7 +97,12 @@ export default function Site() {
   );
 }
 
-function Header({ page, setPage, mobileOpen, setMobileOpen }: any) {
+function Header({ page, setPage, mobileOpen, setMobileOpen }: {
+  page: string;
+  setPage: (page: string) => void;
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+}) {
   return (
     <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -143,7 +149,7 @@ function Header({ page, setPage, mobileOpen, setMobileOpen }: any) {
   );
 }
 
-function Hero({ setPage }: any) {
+function Hero({ setPage }: { setPage: (page: string) => void }) {
   return (
     <section className="grid lg:grid-cols-2 gap-8 items-center">
       <motion.div initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
@@ -450,7 +456,7 @@ function VideoModal({ videoId, onClose }: { videoId: string | null, onClose: ()=
   );
 }
 
-function Footer({ setPage }: any) {
+function Footer({ setPage }: { setPage: (page: string) => void }) {
   return (
     <footer className="mt-16 border-t">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid md:grid-cols-4 gap-6 text-sm">
