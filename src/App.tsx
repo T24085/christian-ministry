@@ -23,6 +23,7 @@ const YOUTUBE_VIDEO_IDS = [
 // Use a real playlist ID to show a large embed on the Gallery page.
 const PLAYLIST_ID = "PLINxsgt5FABZsbqfDwFQpuiYN4oxUDYyd";
 
+
 const BRAND = {
   name: "Walking in Faith",
   tagline: "Sharing the Gospel—one video at a time.",
