@@ -1,495 +1,695 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Mail, Play, ShoppingBag, Heart, Menu, X, BookOpenText, Youtube, Send, Church } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarClock,
+  Check,
+  CloudUpload,
+  Heart,
+  Home,
+  Image,
+  LogIn,
+  Mail,
+  Menu,
+  MessageCircleHeart,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  X,
+} from "lucide-react"
 
-// --- QUICK START ---
-// 1) Replace YOUTUBE_VIDEO_IDS and PLAYLIST_ID with her real video IDs or a playlist ID.
-// 2) Update the brand, verses, bio, and shop items below.
-// 3) When ready, connect the newsletter + contact form to your backend, Netlify Forms, or Formspree.
+const NAV_LINKS = [
+  { label: "Home", href: "#home" },
+  { label: "Spaces", href: "#spaces" },
+  { label: "Writing", href: "#writing" },
+  { label: "Security", href: "#security" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "Join", href: "#join" },
+]
 
-const YOUTUBE_VIDEO_IDS = [
-  "a1SQSEiYDDs",
-  "NWdkLn6uDN4",
-  "VP9tIEi843Y",
-  "fcaq3lyE_U8",
-  "zuCdBaIPDms",
-  "LdsZUj3bGvw",
-];
+const INTRO_POINTS = [
+  "Every profile opens with a beautiful welcome page that feels like a living scrapbook for your family.",
+  "Write blog-style letters to your spouse and siblings, schedule posts for the future, and keep track of every milestone.",
+  "Approve email addresses or let relatives sign in with Google—Firebase protects every private room you create.",
+]
 
-// Use a real playlist ID to show a large embed on the Gallery page.
-const PLAYLIST_ID = "PLINxsgt5FABZsbqfDwFQpuiYN4oxUDYyd";
+const INTRO_FEATURES = [
+  {
+    title: "Family profile home",
+    description:
+      "Introduce your story, add a gallery, and invite friends and mentors to follow along.",
+    icon: Home,
+  },
+  {
+    title: "Spouse sanctuary",
+    description: "Tender letters and inside jokes stay locked away for the one you married.",
+    icon: Heart,
+  },
+  {
+    title: "Sibling circles",
+    description: "Give each sibling a personal feed filled with memories meant only for them.",
+    icon: Users,
+  },
+  {
+    title: "Keepsake imagery",
+    description: "Pair every post with photos from Firebase Storage or a shared Drive folder.",
+    icon: Image,
+  },
+]
 
+const STORY_SPACES = [
+  {
+    key: "profile",
+    name: "Family Profile Home",
+    tagline: "A warm welcome for everyone you invite",
+    description:
+      "Capture the milestones, traditions, and promises that define your family. Post public updates, curate a gallery, and keep a timeline that loved ones can revisit whenever they miss you.",
+    highlights: [
+      "Timeline prompts for weddings, births, and everyday victories.",
+      "Hero banners and galleries fueled by Firebase Storage or Google Drive.",
+      "Comment threads and guestbooks for mentors, pastors, or best friends.",
+    ],
+    entries: [
+      {
+        title: "The promise we made in 2008",
+        meta: "Visible to friends & mentors",
+        body: "We tucked handwritten vows into this post so our community can celebrate how it all began.",
+      },
+      {
+        title: "When we became parents",
+        meta: "Pinned to the family timeline",
+        body: "Photos from the hospital, audio of our first lullaby, and the letter we wrote to future-us.",
+      },
+    ],
+  },
+  {
+    key: "spouse",
+    name: "Spouse Sanctuary",
+    tagline: "Keep your vows alive with letters that last",
+    description:
+      "This is your secret haven. Schedule notes for anniversaries, attach playlists, and document the moments only the two of you understand.",
+    highlights: [
+      "Passwordless Google sign-in keeps the doorway simple and secure.",
+      "Scheduled releases for anniversaries, deployments, and future milestones.",
+      "Audio, photos, and written posts housed together for a richer story.",
+    ],
+    entries: [
+      {
+        title: "For the days when we feel far",
+        meta: "Visible only to Marcus",
+        body: "Open this when the road stretches long. It holds the reminders that keep us tethered.",
+      },
+      {
+        title: "Read this on our 25th anniversary",
+        meta: "Scheduled for May 14, 2032",
+        body: "A playlist, a prayer, and the promises we still chase—waiting quietly until it is time.",
+      },
+    ],
+  },
+  {
+    key: "siblings",
+    name: "Sibling Circles",
+    tagline: "Personal rooms for every brother and sister",
+    description:
+      "Spin up an individual feed for each sibling. Share private notes, upload embarrassing childhood photos, and leave advice for the years ahead.",
+    highlights: [
+      "Approve different email lists so each sibling sees only what is meant for them.",
+      "Create joint memories for all siblings or keep posts one-to-one.",
+      "Let them respond with their own stories and keep the thread alive.",
+    ],
+    entries: [
+      {
+        title: "To Michelle — the protector",
+        meta: "Visible only to Michelle",
+        body: "Thank you for the years you watched the door. I saved the stories I was too young to tell before.",
+      },
+      {
+        title: "To Caleb — the dreamer",
+        meta: "Shared with Caleb & Jordan",
+        body: "You taught us to chase the wild ideas. This is the map we drew in crayon and the path we actually took.",
+      },
+    ],
+  },
+]
 
-const BRAND = {
-  name: "Walking in Faith",
-  tagline: "Sharing the Gospel—one video at a time.",
-  verse: "\"Your word is a lamp to my feet and a light to my path.\" — Psalm 119:105",
-  heroCtaText: "Watch the Latest",
-};
+const WRITING_TOOLS = [
+  {
+    title: "Story templates",
+    description: "Guided prompts help you write about firsts, lasts, and everything in between.",
+    icon: BookOpen,
+  },
+  {
+    title: "Future deliveries",
+    description: "Schedule posts to unlock later so your words arrive exactly when they are needed.",
+    icon: CalendarClock,
+  },
+  {
+    title: "Shared reflections",
+    description: "Invite your spouse or siblings to co-author replies and keep the dialogue alive.",
+    icon: MessageCircleHeart,
+  },
+  {
+    title: "Media keepsakes",
+    description: "Upload images, audio notes, or video links for posts that feel tangible.",
+    icon: Image,
+  },
+]
 
-const SHOP_ITEMS = [
-  { id: 1, title: "Faith Over Fear Tee", price: "$24", img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=800&auto=format&fit=crop", tag: "New" },
-  { id: 2, title: "Prayer Journal", price: "$18", img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop", tag: "Best Seller" },
-  { id: 3, title: "Cross Necklace", price: "$29", img: "https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=800&auto=format&fit=crop", tag: "Gift" },
-];
+const SECURITY_FEATURES = [
+  {
+    title: "Google & email sign-in",
+    description:
+      "Families authenticate through Firebase using Google accounts or secure email links—no forgotten passwords here.",
+    icon: LogIn,
+  },
+  {
+    title: "Approved lists per room",
+    description: "Drop addresses for your spouse and each sibling to control every doorway.",
+    icon: Mail,
+  },
+  {
+    title: "Granular permissions",
+    description: "Firestore security rules keep reads and writes locked to the people you trust.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Photo & file storage",
+    description: "Use Firebase Storage or connect a shared Drive folder for sentimental imagery.",
+    icon: CloudUpload,
+  },
+]
 
-const NAV = [
-  { key: "home", label: "Home", icon: <Church className="w-4 h-4"/> },
-  { key: "videos", label: "Video Gallery", icon: <Youtube className="w-4 h-4"/> },
-  { key: "shop", label: "Shop", icon: <ShoppingBag className="w-4 h-4"/> },
-  { key: "about", label: "About", icon: <BookOpenText className="w-4 h-4"/> },
-  { key: "contact", label: "Contact", icon: <Mail className="w-4 h-4"/> },
-  { key: "donate", label: "Donate", icon: <Heart className="w-4 h-4"/> },
-];
+const TESTIMONIALS = [
+  {
+    quote:
+      "Until Death Do Us Part gave us a place to keep writing vows to each other. The scheduled letters turned deployments into a steady stream of hope.",
+    name: "Elena & Marcus",
+    detail: "Married 18 years, military family",
+  },
+  {
+    quote:
+      "My siblings and I now have a daily ritual of checking our private rooms. We share playlists, scanned Polaroids, and prayers before the sun comes up.",
+    name: "The Rivera Sisters",
+    detail: "Three sisters, two states",
+  },
+  {
+    quote:
+      "As a grief counselor, I recommend this to families who want to prepare legacy letters. The access controls are simple enough for my seniors to manage.",
+    name: "Dana Washington",
+    detail: "Licensed grief counselor",
+  },
+  {
+    quote:
+      "The Google sign-in meant our tech-shy parents could jump in without stress. Now Dad drops voice notes for each of us every Sunday night.",
+    name: "Anthony & Jordan",
+    detail: "Brothers rebuilding connection",
+  },
+]
 
-export default function Site() {
-  const [page, setPage] = useState("home");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+const CTA_POINTS = [
+  "Unlimited drafts across profile, spouse, and sibling rooms.",
+  "Invite collaborators with secure Google or email authentication.",
+  "Store photos and keepsakes alongside every entry.",
+]
+
+export default function App() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [activeSpace, setActiveSpace] = useState(STORY_SPACES[0].key)
+
+  const selectedSpace = STORY_SPACES.find((space) => space.key === activeSpace) ?? STORY_SPACES[0]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-800">
-      <Header page={page} setPage={setPage} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <AnimatePresence mode="wait">
-          {page === "home" && (
-            <motion.div key="home" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-              <Hero setPage={setPage} />
-              <FeaturedVideos onOpen={(id)=>setActiveVideo(id)} />
-              <Newsletter />
-              <Testimonies />
-            </motion.div>
-          )}
-          {page === "videos" && (
-            <motion.div key="videos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <VideoGallery onOpen={(id)=>setActiveVideo(id)} />
-            </motion.div>
-          )}
-          {page === "shop" && (
-            <motion.div key="shop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <Shop />
-            </motion.div>
-          )}
-          {page === "about" && (
-            <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <About />
-            </motion.div>
-          )}
-          {page === "contact" && (
-            <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <Contact />
-            </motion.div>
-          )}
-          {page === "donate" && (
-            <motion.div key="donate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <Donate />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+    <div className="relative min-h-screen overflow-x-hidden bg-rose-50 text-slate-900">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-[-320px] h-[620px] bg-[radial-gradient(circle_at_top,_rgba(244,114,182,0.35),_transparent_65%)]"
+        aria-hidden="true"
+      />
 
-      <VideoModal videoId={activeVideo} onClose={()=>setActiveVideo(null)} />
-      <Footer setPage={setPage} />
-    </div>
-  );
-}
+      <header className="sticky top-0 z-40 border-b border-white/70 bg-white/80 backdrop-blur">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a href="#home" className="flex items-center gap-3 font-semibold">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-rose-500 to-amber-400 text-white">
+              UD
+            </span>
+            <span>
+              <span className="block text-base font-semibold">Until Death Do Us Part</span>
+              <span className="block text-xs font-normal text-rose-500">Legacy storytelling for families</span>
+            </span>
+          </a>
 
-function Header({ page, setPage, mobileOpen, setMobileOpen }: {
-  page: string;
-  setPage: (page: string) => void;
-  mobileOpen: boolean;
-  setMobileOpen: (open: boolean) => void;
-}) {
-  return (
-    <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-slate-900 text-white grid place-content-center font-semibold">WF</div>
-            <div>
-              <div className="font-bold">{BRAND.name}</div>
-              <div className="text-xs text-slate-500 -mt-0.5">{BRAND.tagline}</div>
-            </div>
-          </div>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV.map((n) => (
-              <Button key={n.key} variant={page===n.key?"default":"ghost"} className="rounded-2xl" onClick={()=>setPage(n.key)}>
-                <span className="mr-2">{n.icon}</span>{n.label}
+          <nav className="hidden items-center gap-1 md:flex">
+            {NAV_LINKS.map((link) => (
+              <Button
+                key={link.href}
+                asChild
+                variant="ghost"
+                className="rounded-full px-4 text-sm font-medium text-slate-700 hover:text-rose-600"
+              >
+                <a href={link.href}>{link.label}</a>
               </Button>
             ))}
+            <Button className="rounded-full bg-rose-500 px-5 text-white hover:bg-rose-600" asChild>
+              <a href="#join">Start for free</a>
+            </Button>
           </nav>
 
-          {/* Mobile Toggle */}
-          <Button variant="ghost" className="md:hidden" onClick={()=>setMobileOpen(!mobileOpen)} aria-label="Toggle Menu">
-            {mobileOpen ? <X/> : <Menu/>}
+          <Button
+            variant="ghost"
+            className="md:hidden"
+            aria-label="Toggle navigation"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
-      </div>
 
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.nav initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="md:hidden overflow-hidden border-t">
-            <div className="px-4 py-2 grid gap-1">
-              {NAV.map((n) => (
-                <Button key={n.key} variant={page===n.key?"default":"ghost"} className="justify-start rounded-xl" onClick={()=>{setPage(n.key); setMobileOpen(false);}}>
-                  <span className="mr-2">{n.icon}</span>{n.label}
+        {mobileMenuOpen && (
+          <div className="border-t border-rose-100 bg-white/95 px-4 py-4 shadow-sm md:hidden">
+            <div className="flex flex-col gap-2">
+              {NAV_LINKS.map((link) => (
+                <Button
+                  key={link.href}
+                  variant="ghost"
+                  className="justify-start rounded-lg text-base"
+                  asChild
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <a href={link.href}>{link.label}</a>
+                </Button>
+              ))}
+              <Button className="rounded-lg bg-rose-500 text-white hover:bg-rose-600" asChild>
+                <a href="#join">Start for free</a>
+              </Button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-24 px-4 pb-24 pt-20 sm:px-6 lg:px-8">
+        <section id="home" className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-rose-100 px-4 py-1 text-sm font-medium text-rose-600">
+              <Sparkles className="h-4 w-4" /> Beta invitations are open now
+            </span>
+            <div className="space-y-4">
+              <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+                Hold onto the words that last a lifetime.
+              </h1>
+              <p className="text-lg leading-relaxed text-slate-600">
+                Until Death Do Us Part is a dedicated home for couples and families to write their legacy. Create a
+                profile, invite your spouse and siblings, and build private rooms filled with letters, photos, and
+                prayers they can revisit forever.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button className="rounded-full bg-rose-500 px-6 text-white hover:bg-rose-600" size="lg">
+                Create a family profile
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-full border-rose-200 px-6 text-rose-600 hover:bg-rose-50"
+                size="lg"
+              >
+                <LogIn className="h-4 w-4" /> Continue with Google
+              </Button>
+            </div>
+            <dl className="grid gap-6 sm:grid-cols-3">
+              <div>
+                <dt className="text-sm font-medium text-slate-500">Private spaces</dt>
+                <dd className="mt-1 text-2xl font-semibold text-rose-600">Profile, spouse, siblings</dd>
+              </div>
+              <div>
+                <dt className="text-sm font-medium text-slate-500">Stories preserved</dt>
+                <dd className="mt-1 text-2xl font-semibold text-rose-600">12k+ letters</dd>
+              </div>
+              <div>
+                <dt className="text-sm font-medium text-slate-500">Invite methods</dt>
+                <dd className="mt-1 text-2xl font-semibold text-rose-600">Email or Google</dd>
+              </div>
+            </dl>
+          </div>
+
+          <Card className="relative overflow-hidden border-rose-100 bg-white/80 shadow-xl backdrop-blur">
+            <div className="absolute right-[-40px] top-[-40px] h-48 w-48 rounded-full bg-rose-100/70" aria-hidden="true" />
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-900">Open your story in minutes</CardTitle>
+              <CardDescription className="text-sm text-slate-600">
+                Draft a welcome message, approve emails, and drop your favorite images from Firebase Storage or a shared
+                Drive folder.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Input placeholder="Family name" defaultValue="The Rivera Family" />
+              <Input placeholder="Primary contact email" type="email" defaultValue="elena.rivera@example.com" />
+              <Textarea rows={4} placeholder="Welcome message">
+We built this home so you always have a place to feel loved. Come read whenever you miss our voices.
+              </Textarea>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-dashed border-rose-200 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-800">Spouse room</p>
+                  <p className="mt-1">
+                    Invite with Google in a click and save anniversary letters in one protected feed.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-dashed border-rose-200 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-800">Sibling circles</p>
+                  <p className="mt-1">
+                    Approve each sibling’s email so only they can read the notes written for them.
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/70 p-4 text-sm text-slate-600">
+                <p className="font-semibold text-rose-600">Firebase ready</p>
+                <p className="mt-1">
+                  Authentication, Firestore, and Storage come together so every promise stays private and backed up.
+                </p>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full rounded-full bg-rose-500 text-white hover:bg-rose-600">
+                Save &amp; continue <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardFooter>
+          </Card>
+        </section>
+
+        <section className="grid gap-10 rounded-3xl border border-rose-100 bg-white/70 p-8 shadow-sm lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-6">
+            <h2 className="text-3xl font-semibold text-slate-900">What is Until Death Do Us Part?</h2>
+            <p className="text-lg text-slate-600">
+              It is a sacred digital home where your family can keep writing together. Capture your love story,
+              celebrate the people who shaped you, and prepare letters for tomorrow’s milestones.
+            </p>
+            <ul className="space-y-3 text-sm text-slate-600">
+              {INTRO_POINTS.map((point) => (
+                <li key={point} className="flex items-start gap-3">
+                  <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {INTRO_FEATURES.map((feature) => (
+              <Card key={feature.title} className="bg-white/80">
+                <CardHeader>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                    <feature.icon className="h-5 w-5" />
+                  </div>
+                  <CardTitle className="text-base text-slate-900">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-slate-600">{feature.description}</CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section id="spaces" className="space-y-12">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-semibold text-slate-900">Three rooms to hold every chapter</h2>
+            <p className="mt-4 text-lg text-slate-600">
+              Toggle between your shared profile home, the private spouse sanctuary, and individual sibling circles. Each
+              room keeps posts, media, and permissions separate so stories feel personal and safe.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+            <div className="flex snap-x snap-mandatory gap-3 overflow-auto rounded-2xl border border-rose-100 bg-white/70 p-3 lg:flex-col lg:overflow-visible">
+              {STORY_SPACES.map((space) => (
+                <Button
+                  key={space.key}
+                  variant={space.key === activeSpace ? "default" : "outline"}
+                  className={`flex-1 rounded-xl border-rose-200 px-4 py-4 text-left text-sm font-semibold shadow-sm transition ${
+                    space.key === activeSpace
+                      ? "bg-rose-500 text-white hover:bg-rose-500"
+                      : "bg-white text-slate-700 hover:bg-rose-50"
+                  }`}
+                  onClick={() => setActiveSpace(space.key)}
+                >
+                  <div className="space-y-1">
+                    <p>{space.name}</p>
+                    <p className="text-xs font-normal opacity-80">{space.tagline}</p>
+                  </div>
                 </Button>
               ))}
             </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </header>
-  );
-}
 
-function Hero({ setPage }: { setPage: (page: string) => void }) {
-  return (
-    <section className="grid lg:grid-cols-2 gap-8 items-center">
-      <motion.div initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">{BRAND.name}</h1>
-        <p className="mt-3 text-lg text-slate-600 max-w-prose">{BRAND.tagline}</p>
-        <p className="mt-4 italic text-slate-500">{BRAND.verse}</p>
-        <div className="mt-6 flex gap-3">
-          <Button className="rounded-2xl" onClick={()=>setPage("videos")}><Play className="w-4 h-4 mr-2"/>{BRAND.heroCtaText}</Button>
-          <Button variant="outline" className="rounded-2xl" onClick={()=>setPage("shop")}><ShoppingBag className="w-4 h-4 mr-2"/>Shop</Button>
-        </div>
-      </motion.div>
-      <motion.div initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-        <div className="aspect-video rounded-2xl overflow-hidden shadow">
-          <iframe
-            className="w-full h-full"
-            src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_IDS[0] || "NWdkLn6uDN4"}`}
-            title="Featured video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function FeaturedVideos({ onOpen }: { onOpen: (id:string)=>void }) {
-  return (
-    <section className="mt-14">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Recent Messages</h2>
-        <Button variant="ghost" className="rounded-2xl" onClick={()=>onOpen(YOUTUBE_VIDEO_IDS[1] || "dQw4w9WgXcQ")}>
-          <Play className="w-4 h-4 mr-2"/>Play one
-        </Button>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(YOUTUBE_VIDEO_IDS.length ? YOUTUBE_VIDEO_IDS : ["dQw4w9WgXcQ","ysz5S6PUM-U","aqz-KE-bpKQ"]).slice(0,6).map((id) => (
-          <Card key={id} className="rounded-2xl overflow-hidden">
-            <CardContent className="p-0">
-              <button className="w-full text-left" onClick={()=>onOpen(id)}>
-                <img src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`} alt="Video thumbnail" className="w-full aspect-video object-cover"/>
-              </button>
-              <div className="p-4">
-                <div className="font-semibold truncate">Video Title (auto from YouTube later)</div>
-                <div className="text-sm text-slate-500">Click to watch</div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function VideoGallery({ onOpen }: { onOpen: (id:string)=>void }) {
-  return (
-    <section>
-      <h2 className="text-3xl font-bold mb-6">Video Gallery</h2>
-
-      {/* Optional Playlist Embed */}
-      {PLAYLIST_ID && (
-        <div className="mb-8">
-          <div className="aspect-video rounded-2xl overflow-hidden shadow">
-            <iframe
-              className="w-full h-full"
-              src={`https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}`}
-              title="YouTube Playlist"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            <Card className="bg-white/80 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-rose-600">{selectedSpace.name}</CardTitle>
+                <CardDescription className="text-base text-slate-600">{selectedSpace.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <ul className="space-y-3 text-sm text-slate-600">
+                  {selectedSpace.highlights.map((highlight) => (
+                    <li key={highlight} className="flex items-start gap-3">
+                      <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                        <Check className="h-3 w-3" />
+                      </span>
+                      <span>{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {selectedSpace.entries.map((entry) => (
+                    <div key={entry.title} className="rounded-2xl border border-rose-100 bg-rose-50/70 p-5 shadow-sm">
+                      <p className="text-xs font-medium uppercase tracking-wide text-rose-500">{entry.meta}</p>
+                      <h3 className="mt-2 text-lg font-semibold text-slate-900">{entry.title}</h3>
+                      <p className="mt-2 text-sm text-slate-600">{entry.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-      )}
+        </section>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(YOUTUBE_VIDEO_IDS.length ? YOUTUBE_VIDEO_IDS : ["dQw4w9WgXcQ","ysz5S6PUM-U","aqz-KE-bpKQ","e-ORhEE9VVg","J---aiyznGQ","kXYiU_JCYtU"]).map((id) => (
-          <Card key={id} className="rounded-2xl overflow-hidden">
-            <CardContent className="p-0">
-              <button className="w-full text-left" onClick={()=>onOpen(id)}>
-                <img src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`} alt="Video thumbnail" className="w-full aspect-video object-cover"/>
-              </button>
-              <div className="p-4">
-                <div className="font-semibold truncate">Video Title</div>
-                <div className="text-sm text-slate-500">YouTube</div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Shop() {
-  return (
-    <section>
-      <div className="flex items-end justify-between mb-6">
-        <div>
-          <h2 className="text-3xl font-bold">Shop</h2>
-          <p className="text-slate-600">Support the ministry with uplifting merch.</p>
-        </div>
-        <Button className="rounded-2xl"><ShoppingBag className="w-4 h-4 mr-2"/>View Cart</Button>
-      </div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {SHOP_ITEMS.map((item) => (
-          <Card key={item.id} className="rounded-2xl overflow-hidden">
-            <CardHeader className="p-0">
-              <div className="relative">
-                <img src={item.img} alt={item.title} className="w-full aspect-square object-cover"/>
-                <span className="absolute top-3 left-3 text-xs bg-white/90 rounded-full px-2 py-1 shadow">{item.tag}</span>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <CardTitle className="text-base">{item.title}</CardTitle>
-              <div className="flex items-center justify-between mt-2">
-                <div className="font-semibold">{item.price}</div>
-                <Button className="rounded-xl" variant="outline">Add to Cart</Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <p className="text-xs text-slate-500 mt-4">Tip: Hook this up to Shopify, Etsy, or Stripe Checkout later.</p>
-    </section>
-  );
-}
-
-function About() {
-  return (
-    <section className="grid lg:grid-cols-2 gap-8">
-      <div>
-        <h2 className="text-3xl font-bold">About the Ministry</h2>
-        <p className="mt-4 text-slate-600">Hi! I’m <strong>YOUR WIFE’S NAME</strong>. I create weekly YouTube messages to encourage believers and share the hope of Jesus. This site gathers those messages in one place and offers ways to support the work.</p>
-        <div className="mt-6 p-5 rounded-2xl bg-slate-100">
-          <h3 className="font-semibold">Statement of Faith</h3>
-          <ul className="list-disc pl-5 mt-2 text-slate-700 space-y-1">
-            <li>The Bible is the inspired and authoritative Word of God.</li>
-            <li>Salvation is by grace through faith in Jesus Christ.</li>
-            <li>We are called to love God and love people.</li>
-          </ul>
-        </div>
-      </div>
-      <div>
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle>Speaking & Collaborations</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-slate-600">
-            <p>Invite me to share a message at your church, event, or podcast. I also welcome collaborations with Christian creators and small businesses.</p>
-            <Button className="rounded-2xl" variant="outline"><Mail className="w-4 h-4 mr-2"/>Request Info</Button>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl mt-6">
-          <CardHeader>
-            <CardTitle>Scripture of the Day</CardTitle>
-          </CardHeader>
-          <CardContent className="text-slate-700 italic">“Be strong and courageous… for the Lord your God is with you wherever you go.” — Joshua 1:9</CardContent>
-        </Card>
-      </div>
-    </section>
-  );
-}
-
-function Contact() {
-  return (
-    <section className="grid lg:grid-cols-2 gap-8">
-      <div>
-        <h2 className="text-3xl font-bold">Contact</h2>
-        <p className="mt-2 text-slate-600">Have a testimony to share, a question, or a prayer request? We’d love to hear from you.</p>
-        <form className="mt-6 grid gap-3" onSubmit={(e)=>{e.preventDefault(); alert("Thanks! We’ll reply soon.");}}>
-          <Input placeholder="Your name" required className="rounded-xl"/>
-          <Input type="email" placeholder="Your email" required className="rounded-xl"/>
-          <Textarea placeholder="Your message or prayer request" rows={6} required className="rounded-xl"/>
-          <Button type="submit" className="rounded-2xl"><Send className="w-4 h-4 mr-2"/>Send</Button>
-        </form>
-      </div>
-      <div>
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle>Mailing Address</CardTitle>
-          </CardHeader>
-          <CardContent className="text-slate-600">
-            <p>PO Box 123 • Your City, ST 00000</p>
-            <p className="mt-2">Business inquiries: <a className="underline" href="mailto:hello@example.com">hello@example.com</a></p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl mt-6">
-          <CardHeader>
-            <CardTitle>Invite to Speak</CardTitle>
-          </CardHeader>
-          <CardContent className="text-slate-600">
-            <p>Use the form to outline your event date, location, audience size, and topic focus. We’ll respond promptly.</p>
-          </CardContent>
-        </Card>
-      </div>
-    </section>
-  );
-}
-
-function Donate() {
-  return (
-    <section className="max-w-2xl">
-      <h2 className="text-3xl font-bold">Partner With Us</h2>
-      <p className="mt-2 text-slate-600">If the messages bless you, prayerfully consider supporting the ministry.</p>
-      <div className="mt-6 grid sm:grid-cols-3 gap-4">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-base">One-time Gift</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full rounded-2xl" onClick={()=>alert("Connect to Stripe Checkout or PayPal")}>Give</Button>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-base">Monthly Partner</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full rounded-2xl" variant="outline" onClick={()=>alert("Set up recurring via Stripe Billing")}>Subscribe</Button>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-base">Prayer Support</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full rounded-2xl" variant="ghost" onClick={()=>window.scrollTo({top:0, behavior:'smooth'})}>Share a Request</Button>
-          </CardContent>
-        </Card>
-      </div>
-      <p className="text-xs text-slate-500 mt-4">* All gifts are appreciated. Consult a tax professional regarding deductibility.</p>
-    </section>
-  );
-}
-
-function Newsletter() {
-  return (
-    <section className="mt-16">
-      <Card className="rounded-2xl overflow-hidden">
-        <CardContent className="p-6 md:p-10 grid md:grid-cols-2 gap-6 items-center">
-          <div>
-            <h3 className="text-2xl font-bold">Get Encouragement in Your Inbox</h3>
-            <p className="text-slate-600 mt-2">Join for new videos, devotionals, and shop updates. No spam—unsubscribe anytime.</p>
-            <form className="mt-4 flex gap-2" onSubmit={(e)=>{e.preventDefault(); alert("Subscribed!");}}>
-              <Input type="email" placeholder="Your email" required className="rounded-2xl"/>
-              <Button type="submit" className="rounded-2xl"><Mail className="w-4 h-4 mr-2"/>Subscribe</Button>
-            </form>
+        <section id="writing" className="space-y-12">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-semibold text-slate-900">Writing tools that feel effortless</h2>
+            <p className="mt-4 text-lg text-slate-600">
+              Draft posts together, schedule future letters, and keep every update accompanied by a keepsake image or
+              audio note.
+            </p>
           </div>
-          <div className="hidden md:block">
-            <div className="aspect-video rounded-xl bg-gradient-to-br from-indigo-100 to-pink-100 grid place-content-center">
-              <Play className="w-10 h-10"/>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </section>
-  );
-}
 
-function Testimonies() {
-  return (
-    <section className="mt-16">
-      <h2 className="text-2xl font-bold mb-4">Testimonies</h2>
-      <div className="grid md:grid-cols-3 gap-4">
-        {["A.","B.","C."].map((n, i)=> (
-          <Card key={i} className="rounded-2xl">
-            <CardContent className="p-5 text-slate-700">
-              <p>“These messages lifted my faith during a hard season.”</p>
-              <p className="mt-3 text-sm text-slate-500">— Sister {n}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function VideoModal({ videoId, onClose }: { videoId: string | null, onClose: ()=>void }) {
-  return (
-    <AnimatePresence>
-      {videoId && (
-        <motion.div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 grid place-items-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-          <motion.div className="w-full max-w-3xl" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e)=>e.stopPropagation()}>
-            <div className="aspect-video rounded-xl overflow-hidden shadow-xl">
-              <iframe
-                className="w-full h-full"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-            <div className="flex justify-end mt-3">
-              <Button variant="secondary" className="rounded-xl" onClick={onClose}>Close</Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-function Footer({ setPage }: { setPage: (page: string) => void }) {
-  return (
-    <footer className="mt-16 border-t">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid md:grid-cols-4 gap-6 text-sm">
-        <div>
-          <div className="font-bold">{BRAND.name}</div>
-          <p className="text-slate-500 mt-2">{BRAND.tagline}</p>
-        </div>
-        <div>
-          <div className="font-semibold">Explore</div>
-          <ul className="mt-2 text-slate-600 space-y-1">
-            {NAV.map(n => (
-              <li key={n.key}><button className="hover:underline" onClick={()=>setPage(n.key)}>{n.label}</button></li>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {WRITING_TOOLS.map((tool) => (
+              <Card key={tool.title} className="bg-white/80">
+                <CardHeader>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                    <tool.icon className="h-5 w-5" />
+                  </div>
+                  <CardTitle className="text-base text-slate-900">{tool.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-slate-600">{tool.description}</CardContent>
+              </Card>
             ))}
-          </ul>
+          </div>
+
+          <Card className="bg-white/80 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-900">Preview a scheduled letter</CardTitle>
+              <CardDescription className="text-sm text-slate-600">
+                Compose private posts, attach imagery, and choose the perfect release moment for your spouse or siblings.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Input placeholder="Post title" defaultValue="For the day you need a reminder" />
+              <Textarea rows={5} defaultValue={`Hey love,\n\nIf the world feels heavy today, open the photos in this post and remember how brave you are. I scheduled this for the night before your next deployment so you never feel alone.\n\nForever,\nMe`} />
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border border-dashed border-rose-200 bg-rose-50/70 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-800">Release date</p>
+                  <p className="mt-1">May 14, 2026 at 7:00 PM</p>
+                </div>
+                <div className="rounded-xl border border-dashed border-rose-200 bg-rose-50/70 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-800">Audience</p>
+                  <p className="mt-1">Spouse sanctuary</p>
+                </div>
+                <div className="rounded-xl border border-dashed border-rose-200 bg-rose-50/70 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-800">Attachments</p>
+                  <p className="mt-1">3 photos · 1 audio prayer</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section id="security" className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-600">
+              <ShieldCheck className="h-4 w-4" /> Guarded with Firebase
+            </span>
+            <h2 className="text-3xl font-semibold text-slate-900">Set approvals once and trust every doorway</h2>
+            <p className="text-lg text-slate-600">
+              Decide exactly who can read each room of your story. Every invitation is paired with Firebase
+              Authentication, Firestore access rules, and optional audit trails.
+            </p>
+            <div className="grid gap-4">
+              {SECURITY_FEATURES.map((feature) => (
+                <div key={feature.title} className="flex items-start gap-3 rounded-xl bg-white/80 p-4 shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                    <feature.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-800">{feature.title}</p>
+                    <p className="text-sm text-slate-600">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Card className="bg-white/80 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-900">Approved email list</CardTitle>
+              <CardDescription className="text-sm text-slate-600">
+                Grant, update, or revoke access to each sacred space whenever you need to.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-slate-700" htmlFor="spouse-email">
+                  Spouse email
+                </label>
+                <Input id="spouse-email" type="email" defaultValue="marcus.rivera@gmail.com" className="mt-2" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700" htmlFor="sibling-emails">
+                  Sibling emails
+                </label>
+                <Textarea
+                  id="sibling-emails"
+                  rows={3}
+                  placeholder="Add one email per line"
+                  defaultValue={`michelle.rivera@example.com\ncaleb.rivera@example.com`}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700" htmlFor="trusted-keepers">
+                  Trusted keepers (friends or mentors)
+                </label>
+                <Input id="trusted-keepers" type="text" placeholder="Add optional guardians" className="mt-2" />
+              </div>
+              <div className="rounded-xl border border-dashed border-rose-200 bg-rose-50/70 p-4 text-sm text-slate-600">
+                Every change is logged in Firestore so you always know who can enter each space.
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full rounded-full bg-rose-500 text-white hover:bg-rose-600">Update permissions</Button>
+            </CardFooter>
+          </Card>
+        </section>
+
+        <section id="testimonials" className="space-y-12">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-semibold text-slate-900">Families are already writing their forever</h2>
+            <p className="mt-4 text-lg text-slate-600">
+              Hear from couples, siblings, and counselors who use Until Death Do Us Part to keep their promises alive.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {TESTIMONIALS.map((testimonial) => (
+              <Card key={testimonial.name} className="flex flex-col justify-between bg-white/80">
+                <CardContent className="space-y-4 pt-6 text-slate-600">
+                  <p className="text-sm leading-relaxed">“{testimonial.quote}”</p>
+                </CardContent>
+                <CardFooter className="flex flex-col items-start gap-1 text-left">
+                  <p className="text-sm font-semibold text-slate-900">{testimonial.name}</p>
+                  <p className="text-xs uppercase tracking-wide text-rose-500">{testimonial.detail}</p>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section id="join" className="overflow-hidden rounded-3xl bg-gradient-to-r from-rose-500 via-rose-500/90 to-amber-500 px-8 py-16 text-white shadow-2xl">
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+            <div className="space-y-6">
+              <h2 className="text-3xl font-semibold">Begin your shared legacy today</h2>
+              <p className="text-lg opacity-90">
+                Open a free account to start writing. When you are ready for more storage or additional collaborators,
+                upgrade in a click—your history stays right where you left it.
+              </p>
+              <ul className="space-y-3 text-sm opacity-95">
+                {CTA_POINTS.map((point) => (
+                  <li key={point} className="flex items-start gap-3">
+                    <span className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
+                      <Check className="h-4 w-4" />
+                    </span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-wrap gap-3">
+                <Button className="rounded-full bg-white px-6 text-rose-600 hover:bg-rose-100" size="lg">
+                  Create profile
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="rounded-full border border-white/30 px-6 text-white hover:bg-white/10"
+                  size="lg"
+                >
+                  Talk to onboarding <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <Card className="bg-white/10 text-rose-50">
+              <CardHeader>
+                <CardTitle className="text-xl text-white">What’s included</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-rose-50">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4" /> Firebase Authentication &amp; Google sign-in
+                </div>
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4" /> Spouse-only sanctuary with encrypted posts
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4" /> Unlimited sibling circles and guest access lists
+                </div>
+                <div className="flex items-center gap-2">
+                  <Image className="h-4 w-4" /> Photo keepsakes from Storage or shared Drive folders
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-white/70 bg-white/80">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <p>© {new Date().getFullYear()} Until Death Do Us Part. Crafted with devotion.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <a className="hover:text-rose-600" href="#home">
+              Home
+            </a>
+            <a className="hover:text-rose-600" href="#spaces">
+              Spaces
+            </a>
+            <a className="hover:text-rose-600" href="#security">
+              Security
+            </a>
+            <a className="hover:text-rose-600" href="#join">
+              Get started
+            </a>
+          </div>
         </div>
-        <div>
-          <div className="font-semibold">Ministry</div>
-          <ul className="mt-2 text-slate-600 space-y-1">
-            <li><button className="hover:underline" onClick={()=>setPage("about")}>Statement of Faith</button></li>
-            <li><button className="hover:underline" onClick={()=>setPage("donate")}>Partner / Give</button></li>
-            <li><a className="hover:underline" href="#" onClick={(e)=>e.preventDefault()}>Privacy</a></li>
-          </ul>
-        </div>
-        <div>
-          <div className="font-semibold">Stay Connected</div>
-          <form className="mt-2 flex gap-2" onSubmit={(e)=>{e.preventDefault(); alert("Subscribed!");}}>
-            <Input type="email" placeholder="Email address" className="rounded-xl"/>
-            <Button type="submit" className="rounded-xl">Join</Button>
-          </form>
-        </div>
-      </div>
-      <div className="text-center text-xs text-slate-500 pb-8">© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</div>
-    </footer>
-  );
+      </footer>
+    </div>
+  )
 }
